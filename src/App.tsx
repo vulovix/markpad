@@ -2,6 +2,8 @@ import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
+import { Platform } from "./ipc";
+import HomeScreen from "./features/HomeScreen/HomeScreen";
 
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
@@ -12,9 +14,30 @@ function App() {
     setGreetMsg(await invoke("greet", { name }));
   }
 
+  const selectDir = async () => {
+    const root = await Platform.selectDirectory();
+    console.log(root);
+    setName(JSON.stringify(root));
+    // if (root !== undefined) {
+    //   setState((state) => ({ ...state, root, children: root.children }));
+    //   console.log("selectRootDir", root);
+    //   closeCurrentDoc();
+    //   toggleSidebarExpanded(true);
+    // } else {
+    //   console.error("selectRootDir:", "Failed to open root directory");
+    // }
+  };
+
+  return (
+    <div className="container">
+      <HomeScreen />
+    </div>
+  );
+
   return (
     <main className="container">
-      <h1>Welcome to Tauri + React</h1>
+      <h1>Welcome to</h1>
+      <h1>MarkPad</h1>
 
       <div className="row">
         <a href="https://vitejs.dev" target="_blank">
@@ -34,13 +57,10 @@ function App() {
         onSubmit={(e) => {
           e.preventDefault();
           greet();
+          selectDir();
         }}
       >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
+        <input id="greet-input" onChange={(e) => setName(e.currentTarget.value)} placeholder="Enter a name..." />
         <button type="submit">Greet</button>
       </form>
       <p>{greetMsg}</p>
